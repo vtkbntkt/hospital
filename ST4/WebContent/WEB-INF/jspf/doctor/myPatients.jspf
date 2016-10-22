@@ -1,0 +1,90 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+
+
+<c:set var="language"
+	value="${not empty language ? language : pageContext.request.locale}"
+	scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+
+<fmt:message key="patients.header.surname" var="surnameValue" />
+<fmt:message key="patients.header.name" var="nameValue" />
+<fmt:message key="patients.header.phone" var="phoneValue" />
+<fmt:message key="patients.header.dateOfBirth" var="dateOfBirthValue" />
+<fmt:message key="patients.header.email" var="emailValue" />
+
+
+<style>
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 70%;
+}
+
+td, th {
+	border: 1px solid #d4e4d5;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #d4e4d5;
+}
+
+a.pList:link, a:visited {
+	background-color: none;
+	color: black;
+	border: 1px solid #b7cab5;
+	padding: 2px 4px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+a.pList:hover, a:active {
+	background-color: green;
+	color: white;
+}
+</style>
+
+
+
+<p align="center">
+	<h:locwarnmessage key="${myPatientsListErrors['myPatientsError']}" />
+</p>
+<c:if test="${not empty myPatientList}">
+
+<%-- <c:out value="${backupParams['startIndex']}"/>--%>
+    <c:set var="startIndex" value="${backupParams['startIndex']}"/>
+    <c:set var="resultNum" value="1"/>
+	<p style="text-align:center; font-size: 85%">
+	<h:paginator listSize = "${fn:length(myPatientList)}" resultNum ="${resultNum}" startIndex="${startIndex}" command="getMyPatients"/></p>
+	
+	<table align="center">
+		<tr>
+			<th>ID</th>
+			<th>${surnameValue}</th>
+			<th>${nameValue}</th>
+			<th>${phoneValue}</th>
+			<th>${dateOfBirthValue}</th>
+			<th>${emailValue}</th>
+		</tr>
+		<c:forEach items="${h:sortPatientsByAlphabet(myPatientList)}" var="patient" begin="${startIndex}" end="${startIndex+resultNum-1}">
+			<tr>
+				<td><a class="pList" href="Controller?command=getPatientCard&idPatient=${patient.id}">${patient.id}</a>
+				<td>${patient.lastName}</td>
+				<td>${patient.firstName}</td>
+				<td>${patient.phone}</td>
+				<td>${patient.dateOfBirth}</td>
+				<td>${patient.email}</td>			
+			</tr>
+		</c:forEach>
+	</table>
+	
+	
+	
+</c:if>

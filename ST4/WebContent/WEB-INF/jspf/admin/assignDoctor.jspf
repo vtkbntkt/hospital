@@ -1,0 +1,96 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+<c:set var="language"
+	value="${not empty language ? language : pageContext.request.locale}"
+	scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+<fmt:message key="appointment.title" var="titleValue" />
+<fmt:message key="appointment.form.title" var="formTitleValue" />
+<fmt:message key="appointment.field.patient" var="patientValue" />
+<fmt:message key="appointment.field.doctor" var="doctorValue" />
+<fmt:message key="appointment.button.submit" var="buttonValue" />
+
+
+<script>
+$(document).ready(function() {
+	var patientData = {}; 
+	$("#patients option").each(function(i,el) {  
+		patientData[$(el).data("value")] = $(el).val();
+	});	
+	var doctorData = {};
+	$("#doctors option").each(function(i,el) {  
+		doctorData[$(el).data("value")] = $(el).val();
+	});
+	
+	    $('#submit').click(function()
+	    {
+	        var patientValue = $('#patient').val();
+	        $('input[name="idPatient"]').val($('#patients [value="' + patientValue + '"]').data('value'));
+	        var doctorValue = $('#doctor').val();
+	        $('input[name="idDoctor"]').val($('#doctors [value="' + doctorValue + '"]').data('value'));
+	    });
+});	
+</script>
+
+
+
+
+<p align="center">
+	<h:locwarnmessage key="${docPatErrors['docPatListError']}" />
+</p>
+
+<c:if test="${(not empty doctorDataList)&&(not empty patientDataList)}">
+
+	<form action="Controller" method="post">
+		<fieldset>
+			<legend style="float: top">${formTitleValue}</legend>
+			<p>
+			<h:locwarnmessage key = "${assignDoctorErrors['anamnesExistErr']}"/>
+			<h:locwarnmessage key = "${assignDoctorErrors['anamnesAddErr']}"/>
+			<h:locsuccessmessage key = "${assignDoctorErrors['assignDoctorSuccess']}"/>
+			</p>
+					
+			<input type="hidden" name="command" value="assigndoctor" /> 
+			
+			<p>${patientValue}<input list="patients" name="patient" id="patient"></p>
+			<p>
+			<h:locwarnmessage key = "${assignDoctorErrors['idPatient']}"/>
+			<h:locwarnmessage key = "${assignDoctorErrors['foundPatErr']}"/>
+			</p>
+			<datalist id="patients">
+			<c:forEach items="${patientDataList}" var="patient">
+               <option data-value="${patient.id}" value="${patient.lastName} ${patient.firstName} ${patient.phone}"> 
+              </c:forEach>
+			</datalist>
+			<input type="hidden" name="idPatient">
+			
+			<p><p>
+			<p>${doctorValue}<input list="doctors" name="doctor" id="doctor"></p>
+			<p>
+			<h:locwarnmessage key = "${assignDoctorErrors['idDoctor']}"/>
+			<h:locwarnmessage key = "${assignDoctorErrors['foundDocErr']}"/>
+			</p>
+			<datalist id="doctors">
+			<c:forEach items="${doctorDataList}" var="doctor">
+               <option data-value="${doctor.id}" value="${doctor.lastName} ${doctor.firstName} <fmt:message key="${doctor.category}" />">
+              </c:forEach>
+			</datalist>
+			<input type="hidden" name="idDoctor">
+			<p><p>
+			<input type="submit" id="submit" class="button button1" value="${buttonValue}">
+		</fieldset>
+	</form>
+</c:if>
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,164 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+<style>
+.card {
+	box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+	transition: 0.3s;
+	width: 80%;
+	border-radius: 5px;
+	margin: auto;
+}
+
+.card:hover {
+	box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.2);
+}
+
+.container {
+	padding: 2px 16px;
+}
+
+.button {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 1px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+}
+
+.button1 {
+	background-color: white;
+	color: black;
+	border: 2px solid #4CAF50;
+}
+
+a.pList:link, a:visited {
+	background-color: none;
+	color: black;
+	border: 1px solid #b7cab5;
+	padding: 2px 4px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+a.pList:hover, a:active {
+	background-color: green;
+	color: white;
+}
+</style>
+
+
+
+<c:set var="language"
+	value="${not empty language ? language : pageContext.request.locale}"
+	scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+
+<fmt:message key="patients.header.name" var="nameValue" />
+<fmt:message key="patients.header.phone" var="phoneValue" />
+<fmt:message key="patients.header.dateOfBirth" var="dateOfBirthValue" />
+
+<fmt:message key="task.params.date" var="dateValue" />
+<fmt:message key="task.params.doctor" var="doctorValue" />
+<fmt:message key="task.params.diagnosis" var="diagnosisValue" />
+<fmt:message key="task.params.task" var="taskValue" />
+
+<fmt:message key="task.button.find" var="findValue" />
+<fmt:message key="task.button.reset" var="resetValue" />
+
+
+
+<script>
+$(document).ready(function(){
+   $("#find").click(function(){
+        var x = $("#surname").serializeArray();    
+        $.each(x, function(i, field){	
+        var surname = field.value.toLowerCase();
+        $("div").css("background-color", "");
+        $("div[data-surname='" + surname + "']").css("background-color", "#d4e4d5");	
+        $('.card').hide();
+        $("div[data-surname='" + surname + "']").show();
+            
+        });      
+    });
+    	
+   $("#reset").click(function(){
+	   $("div").css("background-color", "");
+	   $("div").show();
+              
+   });
+   
+   $("#manipulation").click(function(){
+	   $('.card').hide();
+	   $("div[data-type='MANIPULATION']").show();
+              
+   });
+   $("#surgery").click(function(){
+	   $('.card').hide();
+	   $("div[data-type='SURGERY']").show();
+              
+   });
+   $("#drug").click(function(){
+	   $('.card').hide();
+	   $("div[data-type='DRUG']").show();
+              
+   });
+});
+</script>
+
+
+
+
+<p align="center">
+	<h:locwarnmessage key="${taskListErrors['taskListError']}" />
+</p>
+
+<c:if test="${not empty taskList}">
+
+<div style="text-align:center">
+
+ <c:if test="${sessionScope.userInfo.roleId!=3}">
+        <button class="button button1" id="surgery"><fmt:message key="SURGERY"/></button>
+ </c:if>
+<button class="button button1" id="drug"><fmt:message key="DRUG"/></button>
+<button class="button button1" id="manipulation"><fmt:message key="MANIPULATION"/></button>
+<input type="text" id ="surname" name="id">
+<button class="button button1" id="find">${findValue}</button>
+<button class="button button1" id="reset">${resetValue}</button>
+</div>
+
+
+<a href="" id="showCard"></a>
+
+
+
+	<c:forEach items="${taskList}" var="task">
+		<div class="card" data-surname="${fn:toLowerCase(task.patientName.lastName)}" data-type="${task.type}">
+			<a href="Controller?command=performTask&idTask=${task.idTask}" style="color: green;" title="Perform" class="close">&#10004;</a>
+			<div class="container">
+				<p>
+				<b style="color: blue;"><fmt:message key="${task.type}"/></b> 
+				<b>${dateValue}:</b> ${task.creationDate}
+				<b>${nameValue}:</b> ${task.patientName.firstName} ${task.patientName.lastName}
+				<b>${phoneValue}:</b> ${task.phone} 
+				<b>${dateOfBirthValue}:</b>${task.dateOfBirth} 
+				<b>${doctorValue}:</b> ${task.doctorName.firstName} ${task.doctorName.lastName}
+				</p>
+				<p>
+				<b>${diagnosisValue}:</b> ${task.initialDiagnosis}</p>
+				<p>
+				<b>${taskValue}:</b> ${task.servValue}</p>
+			</div>
+		</div>
+	</c:forEach>
+	<br><br>
+</c:if>

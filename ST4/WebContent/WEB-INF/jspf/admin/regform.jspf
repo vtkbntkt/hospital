@@ -1,0 +1,117 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+<c:set var="language" value="${not empty language ? language : pageContext.request.locale}" scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+<fmt:message key="regform.title" var="titleValue" />
+<fmt:message key="regform.form.title" var="formtitleValue" />
+<fmt:message key="regform.input.firstname" var="firstnameValue" />
+<fmt:message key="regform.input.lastname" var="lastnameValue" />
+<fmt:message key="regform.input.phone" var="phoneValue" />
+<fmt:message key="regform.input.email" var="emailValue" />
+
+<fmt:message key="regform.input.date" var="dateValue" />
+<fmt:message key="regform.select.doctor" var="doctorValue" />
+<fmt:message key="regform.select.nurse" var="nurseValue" />
+<fmt:message key="regform.input.patient" var="patientValue" />
+<fmt:message key="regform.select.pediatrician" var="pediatricianValue" />
+<fmt:message key="regform.select.therapist" var="therapistValue" />
+<fmt:message key="regform.select.otolaryngologist" var="otolaryngologistValue" />
+<fmt:message key="regform.select.ophthalmologist" var="ophthalmologistValue" />
+<fmt:message key="regform.select.neurologist" var="neurologistValue" />
+<fmt:message key="regform.select.surgeon" var="surgeonValue" />
+<fmt:message key="regform.select.traumatologist" var="traumatologistValue" />
+<fmt:message key="regform.button.submit" var="buttonValue" />
+
+<fmt:message key="regform.placeholder.firstname" var="firstnamePhValue" />
+<fmt:message key="regform.placeholder.lastname" var="lastnamePhValue" />
+
+
+<script>
+ 
+$(document).ready(function() {
+	$("#role").change(function() {
+        if ($(this).val() == "doctor") {
+            $("#category").show();
+        }
+        else
+            $("#category").hide();
+    });
+	 
+	});
+</script>
+	<form action="Controller" method="post">
+		<fieldset>
+			<legend style="float: top">${formtitleValue}</legend>
+			<input type="hidden" name="command" value="reguser" />
+			<p><h:locwarnmessage key = "${regErrors['noticeErr']}"/>
+			<h:locsuccessmessage key = "${regErrors['noticeSuccess']}"/><p>
+			
+			<p><h:locwarnmessage key = "${regErrors['mailErr']}"/>
+			<h:locsuccessmessage key = "${regErrors['mailSuccess']}"/><p>
+			
+			<p>${firstnameValue}<input type="text" name="firstname" 
+			value = "${regUserBean.firstName}" required 
+			pattern="^[A-ZА-Я][a-zа-я]{1,19}$"
+			title="${firstnamePhValue}"
+			placeholder="${firstnamePhValue}">
+			<h:locwarnmessage key = "${regErrors['firstname']}"/>		
+			<p>
+			
+			<p>${lastnameValue}<input type="text" name="lastname" 
+			value = "${regUserBean.lastName}" required
+			pattern="^[A-ZА-Я][a-zа-я]{1,19}$" 
+			title="${lastnamePhValue}"
+			placeholder="${lastnamePhValue}">
+			<h:locwarnmessage key = "${regErrors['lastname']}"/>
+			<p>
+			
+			<p>${emailValue}<input type="email" name="email" 
+			value = "${regUserBean.email}" required 
+			placeholder="example@mail.ru">
+			<h:locwarnmessage key = "${regErrors['email']}"/>
+			<p>
+			
+			<p>${phoneValue}<input type="text" name="telephone" 
+			value = "${regUserBean.phonNumber}" required 
+			pattern="^(\d{3}) (\d{3}) (\d{4})$"
+			title="123 456 1234"
+			placeholder="123 456 1234">
+			<h:locwarnmessage key = "${regErrors['telephone']}"/>
+			<p>
+			
+			<p>${dateValue}<input type="text" name="bday" 
+			value = "${regUserBean.dateOfBirth}" required 
+			pattern="[0-9]{4}-(0[1-9]|1[012])-(0[1-9]|1[0-9]|2[0-9]|3[01])" 
+			placeholder="2000-08-31" 
+			title="2000-08-31">
+            <h:locwarnmessage key = "${regErrors['bday']}"/>			
+            <p>
+			
+			<p><select name="role" id ="role">   
+			<option value="patient" ${regUserBean.role == 'patient' ? 'selected' : ''}>${patientValue}</option>      
+                <option value="nurse" ${regUserBean.role == 'nurse' ? 'selected' : ''}>${nurseValue}</option>
+                <option value="doctor" ${regUserBean.role == 'doctor' ? 'selected' : ''}>${doctorValue}</option>
+                </select>
+            <h:locwarnmessage key = "${regErrors['role']}"/>			
+            <p>
+                
+            <p><select name="category" id = "category" style="display:${regUserBean.role == 'doctor' ? '' : 'none'}">
+                <option value="pediatrician" ${regUserBean.category == 'pediatrician' ? 'selected' : ''}>${pediatricianValue}</option>
+                <option value="therapist" ${regUserBean.category == 'therapist' ? 'selected' : ''}>${therapistValue}</option>
+                <option value="otolaryngologist" ${regUserBean.category == 'otolaryngologist' ? 'selected' : ''}>${otolaryngologistValue}</option>
+                <option value="ophthalmologist" ${regUserBean.category == 'ophthalmologist' ? 'selected' : ''}>${ophthalmologistValue}</option>
+                <option value="neurologist" ${regUserBean.category == 'neurologist' ? 'selected' : ''}>${neurologistValue}</option>
+                <option value="surgeon" ${regUserBean.category == 'surgeon' ? 'selected' : ''}>${surgeonValue}</option>
+                <option value="traumatologist" ${regUserBean.category == 'traumatologist' ? 'selected' : ''}>${traumatologistValue}</option>
+                </select>
+            <h:locwarnmessage key = "${regErrors['category']}"/>			
+                <p>    	
+			<input type="submit" class="button button1" value="${buttonValue}">
+		</fieldset>
+	</form>
+
+	

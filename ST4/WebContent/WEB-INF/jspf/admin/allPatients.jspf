@@ -1,0 +1,98 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+
+
+<c:set var="language" value="${not empty language ? language : pageContext.request.locale}" scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+<fmt:message key="patients.title" var="titleValue" />
+<fmt:message key="patients.header.surname" var="surnameValue" />
+<fmt:message key="patients.header.name" var="nameValue" />
+<fmt:message key="patients.header.phone" var="phoneValue" />
+<fmt:message key="patients.header.dateOfBirth" var="dateOfBirthValue" />
+<fmt:message key="patients.header.email" var="emailValue" />
+<fmt:message key="upload.error.extension" var="extValue" />
+<fmt:message key="upload.error.size" var="sizeValue" />
+<fmt:message key="upload.form.title" var="uploadValue" />
+
+<script>
+$(document).ready(function() {
+	<c:if test="${not empty uploadingPhotoErrors}">
+	var idPatient = localStorage.getItem('idpatient');
+	$("#idPatient").val(idPatient);
+	$('#'+idPatient)[0].click();
+	</c:if>
+});
+
+$(document).ready(function(){
+	$('.pList').click(function() {
+	    var id = $(this).attr('id');
+	    $("#idPatient").val(id);
+	    //alert(id);
+	    localStorage.setItem('idpatient', id);
+	});
+});
+
+</script>
+
+
+
+<c:url value="Controller" var="sortByDateURL">
+    <c:param name="command" value="getAllPatients" />
+    <c:param name="sorting" value="sortPatientsByDateOfBirth" />
+</c:url>
+
+<c:url value="Controller" var="sortByAlphhURL">
+    <c:param name="command" value="getAllPatients" />
+    <c:param name="sorting" value="sortPatientsByAlphabet" />
+</c:url>
+
+
+
+<p align="center"><h:locwarnmessage key = "${patientErrors['patientListError']}"/></p>
+<c:if test="${not empty patientList}">
+     
+
+<table align="center">
+  <tr>
+    <th>ID</th>
+    <th><a href="${sortByAlphhURL}" class="menuItem">${surnameValue}</a></th>
+    <th>${nameValue}</th>
+    <th>${phoneValue}</th>
+    <th><a href="${sortByDateURL}" class="menuItem">${dateOfBirthValue}</a></th>
+    <th>${emailValue}</th>
+  </tr>
+    <c:forEach items="${patientList}" var="patient" >
+   <tr>
+   <td><a class="pList" href="#addPhotoForm" id="${patient.id}">${patient.id}</a>
+    <td>${patient.lastName}</td>
+    <td>${patient.firstName}</td>
+    <td>${patient.phone}</td>    
+    <td>${patient.dateOfBirth}</td>
+    <td>${patient.email}</td>
+  </tr>
+    </c:forEach>
+    </table>
+    
+    <div id="addPhotoForm" class="modalDialog">
+		<div>
+			<a href="#close" title="Close" class="close">X</a>
+			<p>${uploadValue}</p>
+			<form action="Controller" method="post" enctype="multipart/form-data">
+				<input type="hidden" name="command" value="uploadPhoto" />
+				<input type="hidden" name="idPatient" id="idPatient"/>
+				 <h:locwarnmessage key="${uploadingPhotoErrors['photoFile']}"/>
+				File: <input type="file" name="photoFile"/> <br />
+				<p>${extValue}</p> 
+				<p>${sizeValue}</p>
+				<input type="submit" value="${uploadValue}" name="upload" id="upload" class="button button1" />
+			</form>
+		</div>
+	</div>
+	
+	
+	</div>
+    </c:if>

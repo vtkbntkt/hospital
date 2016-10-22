@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<taglib xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-jsptaglibrary_2_0.xsd"
+	version="2.0">
+
+	<tlib-version>1</tlib-version>
+	<short-name>gaitags</short-name>
+	<uri>ua.nure.gudkov.tags</uri>
+
+	<tag>
+		<name>paginator</name>
+		<tag-class>ua.nure.gudkov.ST4.tag.PaginationTag</tag-class>
+		<body-content>empty</body-content>
+
+		<attribute>
+			<name>listSize</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>int</type>
+		</attribute>
+
+		<attribute>
+			<name>resultNum</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>int</type>
+		</attribute>
+
+		<attribute>
+			<name>startIndex</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>int</type>
+		</attribute>
+
+
+		
+		<attribute>
+			<name>command</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<type>java.lang.String</type>
+		</attribute>
+		
+		
+	</tag>
+
+	<tag-file>
+		<name>locale</name>
+		<path>/WEB-INF/tags/locale.tag</path>
+	</tag-file>
+
+	<tag-file>
+		<name>locsuccessmessage</name>
+		<path>/WEB-INF/tags/locsuccessmessage.tag</path>
+	</tag-file>
+
+	<tag-file>
+		<name>locwarnmessage</name>
+		<path>/WEB-INF/tags/locwarnmessage.tag</path>
+	</tag-file>
+
+	<tag-file>
+		<name>locwarnmessage2</name>
+		<path>/WEB-INF/tags/locwarnmessage2.tag</path>
+	</tag-file>
+
+	<tag-file>
+		<name>servicestatus</name>
+		<path>/WEB-INF/tags/servicestatus.tag</path>
+	</tag-file>
+
+	<function>
+		<name>sortPatientsByAlphabet</name>
+		<function-class>ua.nure.gudkov.ST4.util.Sorter</function-class>
+		<function-signature>java.util.List sortPatientsByAlphabet(java.util.List)</function-signature>
+	</function>
+
+	<function>
+		<name>sortPatientsByDateOfBirth</name>
+		<function-class>ua.nure.gudkov.ST4.util.Sorter</function-class>
+		<function-signature>java.util.List sortPatientsByDateOfBirth(java.util.List)</function-signature>
+	</function>
+
+
+</taglib>

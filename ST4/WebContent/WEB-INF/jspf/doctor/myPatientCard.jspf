@@ -1,0 +1,257 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+<c:set var="language"
+	value="${not empty language ? language : pageContext.request.locale}"
+	scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+<fmt:message key="patients.title" var="titleValue" />
+<fmt:message key="patients.header.surname" var="surnameValue" />
+<fmt:message key="patients.header.name" var="nameValue" />
+<fmt:message key="patients.header.phone" var="phoneValue" />
+<fmt:message key="patients.header.dateOfBirth" var="dateOfBirthValue" />
+<fmt:message key="patients.header.email" var="emailValue" />
+
+<fmt:message key="card.header" var="headerValue" />
+<fmt:message key="card.params.diagnosis" var="diagnosisValue" />
+
+<fmt:message key="card.button.discharge" var="dischargeValue" />
+<fmt:message key="card.add.fDiagnosis" var="fDiagnosisValue" />
+<fmt:message key="card.add.iDiagnosis" var="iDiagnosisValue" />
+<fmt:message key="card.add.drugs" var="addDrugsValue" />
+<fmt:message key="card.add.surgery" var="addSurgeryValue" />
+<fmt:message key="card.add.manipulation" var="addManipulationValue" />
+<fmt:message key="card.button.add" var="adValue" />
+
+<style type='text/css'>
+fieldset {
+	font-size: 18px;
+	padding: 10px;
+	width: 650px;
+	line-height: 1.8;
+	margin: auto;
+}
+
+ul.pat {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+}
+
+li.pat {
+	padding-left: 16px;
+}
+
+li.pat:before {
+	content: "•";
+	padding-right: 8px;
+	color: green;
+}
+
+
+
+a.add:after {
+	content: "\002b";
+	color: green;
+}
+
+.button {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 1px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+}
+
+.button1 {
+	background-color: white;
+	color: black;
+	border: 2px solid #4CAF50;
+}
+
+.modalDialog {
+	position: fixed;
+	font-family: Arial, Helvetica, sans-serif;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.8);
+	z-index: 99999;
+	opacity: 0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+	pointer-events: none;
+}
+
+.modalDialog:target {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.modalDialog>div {
+	width: 650px;
+	position: relative;
+	margin: 10% auto;
+	padding: 10px 10px 10px 10px;
+	background: white;
+}
+</style>
+<script src="resources/js/jquery.js"></script>
+<script>
+	$(document).ready(function() {
+		<c:if test="${(not empty addDiagnosisErrors) ||(not empty addServErrors) }">
+		$('#showWarnings')[0].click();
+		</c:if>
+	});
+</script>
+
+
+
+
+
+
+
+<c:if test="${not empty myPatientCard}">
+
+	<fieldset>
+		<legend style="float: top">${headerValue} #${myPatientCard.idCard} ${myPatientCard.creationDate}</legend>
+
+         <img id = "patientPhoto" style="float:right;width:180px;height:180px;" 
+         src="Controller?command=getPhoto&idPatient=${myPatientCard.idPatient}">
+
+		<h4>${surnameValue}:${myPatientCard.lastName}</h4>
+		<h4>${nameValue}:${myPatientCard.firstName}</h4>
+		<h4>${phoneValue}:${myPatientCard.phone}</h4>
+		<h4>${dateOfBirthValue}:${myPatientCard.dateOfBirth}</h4>
+		<h4>${emailValue}:${myPatientCard.email}</h4>
+
+		<p>${diagnosisValue}<a class="add" id="addDiagnosis" href="#addDiagnosisForm"></a></p>
+		<div id="addDiagnosisForm" class="modalDialog">
+			<div>
+				<a href="#close" title="Close" class="close">X</a>
+				<p>${iDiagnosisValue}</p>
+				<form action="Controller" method="post">
+				<input type="hidden" name="command" value="addDiagnosis" /> 
+				<input type="hidden" name="idAnamnesis" value="${myPatientCard.idCard}" />
+				<input type="hidden" name="idPatient" value="${myPatientCard.idPatient}" />
+				<textarea name="diagnosValue" rows="3" cols="67" maxlength="100" required></textarea>
+				<input type="submit" value="${adValue}" class="button button1">
+				</form>
+			</div>
+		</div>
+		<ul class="pat"><li><small>${myPatientCard.initialDiagnosis}</small></li></ul>
+
+
+		<p> <fmt:message key="DRUG"/><a class="add" id="addDrugs" href="#addDrugsForm"></a></p>
+		<div id="addDrugsForm" class="modalDialog">
+			<div>
+				<a href="#close" title="Close" class="close">X</a>
+				<p>${addDrugsValue}</p>
+				<form action="Controller" method="post">
+				<input type="hidden" name="command" value="addService" /> 
+				<input type="hidden" name="idAnamnesis" value="${myPatientCard.idCard}" />
+				<input type="hidden" name="serviceType" value="drug" /> 
+				<input type="hidden" name="idPatient" value="${myPatientCard.idPatient}" />
+				<textarea name="servValue" rows="3" cols="67" maxlength="100" required></textarea>
+				<input type="submit" value="${adValue}" class="button button1">
+				</form>
+			</div>
+		</div>	
+		<ul class="pat">
+			<c:forEach items="${myPatientCard.drugs}" var="drug">
+				<li class="pat">
+				<h:servicestatus key="${drug.servStatus}" />
+				<small>${drug.servDate} ${drug.servValue}</small></li>
+			</c:forEach>
+		</ul>
+
+
+
+		<p><fmt:message key="MANIPULATION"/><a class="add" id="addManipulations" href="#addManupulationsFormForm"> </a></p>
+		<div id="addManupulationsFormForm" class="modalDialog">
+			<div>
+				<a href="#close" title="Close" class="close">X</a>
+				<p>${addManipulationValue}</p>
+				<form action="Controller" method="post">
+				<input type="hidden" name="command" value="addService" /> 
+				<input type="hidden" name="idAnamnesis" value="${myPatientCard.idCard}" />
+				<input type="hidden" name="serviceType" value="manipulation" /> 
+				<input type="hidden" name="idPatient" value="${myPatientCard.idPatient}" />
+				<textarea name="servValue" rows="3" cols="67" maxlength="100" required></textarea>
+				<input type="submit" value="${adValue}" class="button button1">
+				</form>
+			</div>
+		</div>
+		<ul class="pat">
+			<c:forEach items="${myPatientCard.manipulations}" var="manipulation">
+				<li class="pat">
+				<h:servicestatus key="${manipulation.servStatus}" />
+				<small>${manipulation.servDate} ${manipulation.servValue}</small></li>
+			</c:forEach>
+		</ul>
+
+
+		<p><fmt:message key="SURGERY"/><a class="add" id="addSurgeries" href="#addSurgeriesFormForm"> </a> </p>
+		<div id="addSurgeriesFormForm" class="modalDialog">
+			<div>
+				<a href="#close" title="Close" class="close">X</a>
+				<p>${addSurgeryValue}</p>
+				<form action="Controller" method="post">
+				<input type="hidden" name="command" value="addService" /> 
+				<input type="hidden" name="idAnamnesis" value="${myPatientCard.idCard}" />
+				<input type="hidden" name="serviceType" value="surgery" /> 
+				<input type="hidden" name="idPatient" value="${myPatientCard.idPatient}" />
+				<textarea name="servValue" rows="3" cols="67" maxlength="100" required></textarea>
+				<input type="submit" value="${adValue}" class="button button1">
+				</form>
+			</div>
+		</div>
+		<ul class="pat">
+			<c:forEach items="${myPatientCard.surgeries}" var="surgery">
+				<li class="pat">
+				<h:servicestatus key="${surgery.servStatus}" />
+				<small>${surgery.servDate} ${surgery.servValue}</small></li>
+			</c:forEach>
+		</ul>
+
+
+		<a href="#addFinalDiagnosis" class="button button1" style="text-decoration: none">${dischargeValue}</a>
+		<div id="addFinalDiagnosis" class="modalDialog">
+			<div>
+				<a href="#close" title="Close" class="close">X</a>
+				<p>${fDiagnosisValue}</p>
+				<form action="Controller" method="post">
+				<input type="hidden" name="command" value="dischargePatient" /> 
+				<input type="hidden" name="idAnamnesis" value="${myPatientCard.idCard}" />
+				<input type="hidden" name="idPatient" value="${myPatientCard.idPatient}" />
+				<textarea name="diagnosValue" rows="3" cols="67" maxlength="100" required></textarea>
+				<input type="submit" value="${adValue}" class="button button1">
+				</form>
+			</div>
+		</div>
+	</fieldset>
+
+
+	<a href="#warnings" id="showWarnings"></a>
+	<div id="warnings" class="modalDialog">
+		<div>
+			<a href="#close" title="Close" class="close">X</a>
+			<p align="center"><h:locwarnmessage key="${addDiagnosisErrors['diagnosValue']}" /></p>
+			<p align="center"><h:locwarnmessage key="${addServErrors['servValue']}" /></p>
+		</div>
+	</div>
+	
+</c:if>
+
+
+

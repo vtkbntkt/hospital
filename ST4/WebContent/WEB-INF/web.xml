@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" id="WebApp_ID" version="3.1">
+  <display-name>ST4</display-name>
+   <listener>
+        <listener-class>ua.nure.gudkov.ST4.listener.ContextListener</listener-class>
+    </listener>
+  <welcome-file-list>
+    <welcome-file>index.jsp</welcome-file>
+  </welcome-file-list>
+  
+   <!--============================================================
+	404 error page
+    =============================================================-->
+  <error-page>
+    <error-code>404</error-code>
+    <location>/WEB-INF/jsp/404.jsp</location>
+  </error-page>
+  
+    <!--============================================================
+	Encoding support filter
+    =============================================================-->
+	<filter>
+		<filter-name>EncodingFilter</filter-name>
+		<filter-class>ua.nure.gudkov.ST4.filter.EncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>EncodingFilter</filter-name>
+		<url-pattern>/Controller</url-pattern>
+		<servlet-name>Controller</servlet-name>
+	</filter-mapping>
+	
+	<!--============================================================
+	File uploading support filter
+    =============================================================-->
+	<filter>
+		<filter-name>UploadFileFilter</filter-name>
+		<filter-class>ua.nure.gudkov.ST4.filter.UploadFileFilter</filter-class>
+		<init-param>
+			<param-name>maxFileSize</param-name>
+			<param-value>102400</param-value>
+		</init-param>
+		<init-param>
+			<param-name>fileExtension</param-name>
+			<param-value>jpg</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>UploadFileFilter</filter-name>
+		<url-pattern>/Controller</url-pattern>
+		<servlet-name>Controller</servlet-name>
+	</filter-mapping>
+	
+	<!--============================================================
+	Security filter.
+	1) admin: admin commands
+	2) patient: patient commands
+	3) doctor: doctor commands
+	4) nurse: nurse commands
+	5) commons: commands for all roles
+	6) out-of-control: commands without access control
+	=============================================================-->
+
+	<filter>
+		<filter-name>CommandAccessFilter</filter-name>
+		<filter-class>ua.nure.gudkov.ST4.filter.CommandAccessFilter</filter-class>
+		<init-param>
+			<param-name>admin</param-name>
+			<param-value>getNewPatients reguser getAllDoctors getAllPatients getAssignDoctorForm assigndoctor uploadPhoto</param-value>
+		</init-param>
+		<init-param>
+			<param-name>patient</param-name>
+			<param-value>getMyCards printMyCard</param-value>
+		</init-param>
+		<init-param>
+			<param-name>doctor</param-name>
+			<param-value>getMyPatients getPatientCard addService addDiagnosis getPhoto dischargePatient getDoctorTasks performTask </param-value>
+		</init-param>
+		<init-param>
+			<param-name>nurse</param-name>
+			<param-value>getDoctorTasks performTask</param-value>
+		</init-param>
+		<init-param>
+			<param-name>common</param-name>
+			<param-value>logout noCommand getaccount </param-value>
+		</init-param>
+		<init-param>
+			<param-name>out-of-control</param-name>
+			<param-value>changelang signin getlogin</param-value>
+		</init-param>
+	</filter>
+	
+	<filter-mapping>
+		<filter-name>CommandAccessFilter</filter-name>
+		<url-pattern>/Controller</url-pattern>
+		<servlet-name>Controller</servlet-name>
+	</filter-mapping>
+
+	
+</web-app>

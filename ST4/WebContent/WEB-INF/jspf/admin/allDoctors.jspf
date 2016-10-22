@@ -1,0 +1,69 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+
+<c:set var="language" value="${not empty language ? language : pageContext.request.locale}" scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+
+<fmt:message key="doctors.title" var="titleValue" />
+<fmt:message key="doctors.header.surname" var="surnameValue" />
+<fmt:message key="doctors.header.name" var="nameValue" />
+<fmt:message key="doctors.header.category" var="categoryValue" />
+<fmt:message key="doctors.header.patientNum" var="patientNumValue" />
+<fmt:message key="doctors.header.phone" var="phoneValue" />
+<fmt:message key="doctors.header.dateOfBirth" var="dateOfBirthValue" />
+<fmt:message key="doctors.header.email" var="emailValue" />
+
+
+
+
+<c:url value="Controller" var="sortByPatientsURL">
+    <c:param name="command" value="getAllDoctors" />
+    <c:param name="sorting" value="sortDoctorsByPatientNumber" />
+</c:url>
+
+<c:url value="Controller" var="sortByAlphhURL">
+    <c:param name="command" value="getAllDoctors" />
+    <c:param name="sorting" value="sortDoctorsByAlphabet" />
+</c:url>
+
+<c:url value="Controller" var="sortByCategoryURL">
+    <c:param name="command" value="getAllDoctors" />
+    <c:param name="sorting" value="sortDoctorsByCategory" />
+</c:url>
+
+
+
+
+
+
+
+<p align="center"><h:locwarnmessage key = "${doctorErrors['doctorListError']}"/></p>
+<c:if test="${not empty doctorList}">
+<table align="center">
+  <tr>
+    
+    <th><a href="${sortByAlphhURL}" class="menuItem">${surnameValue}</a></th>
+    <th>${nameValue}</th>
+    <th><a href="${sortByCategoryURL}" class="menuItem">${categoryValue}</a></th>
+    <th><a href="${sortByPatientsURL}" class="menuItem">${patientNumValue}</a></th>
+    <th>${phoneValue}</th>
+    <th>${dateOfBirthValue}</th>
+    <th>${emailValue}</th>
+  </tr>
+<c:forEach items="${doctorList}" var="doctor">
+  <tr>
+    <td>${doctor.lastName}</td>
+    <td>${doctor.firstName}</td>
+    <td><fmt:message key="${doctor.category}" /></td>
+    <td>${doctor.patientNum}</td>
+    <td>${doctor.phone}</td>    
+    <td>${doctor.dateOfBirth}</td>
+    <td>${doctor.email}</td>
+  </tr>
+</c:forEach>
+</table>
+</c:if>
+
+	

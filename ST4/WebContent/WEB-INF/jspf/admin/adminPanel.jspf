@@ -1,0 +1,193 @@
+<%@ page pageEncoding="UTF-8"%>
+<%@ include file="/WEB-INF/jspf/directive/page.jspf" %>
+<%@ include file="/WEB-INF/jspf/directive/taglib.jspf" %>
+    
+<c:set var="language" value="${not empty language ? language : pageContext.request.locale}" scope="session" />
+<fmt:setLocale value="${language}" />
+<fmt:setBundle basename="decor" />
+<fmt:message key="adminp.option.register" var="registerValue" />
+<fmt:message key="adminp.option.patients" var="patientsValue" /> 
+<fmt:message key="adminp.option.doctors" var="doctorsValue" /> 
+<fmt:message key="adminp.option.assignDoctor" var="assignDoctorValue" />  
+<fmt:message key="adminp.option.logout" var="logoutValue" /> 
+<fmt:message key="adminp.option.newPatients" var="newPatientsValue" />  
+    
+    
+<!DOCTYPE html>
+<html lang="${language}">
+<head>
+<style>
+ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e7e7e7;
+    background-color: #f3f3f3;
+}
+
+li {
+    float: left;
+}
+
+li a {
+    display: block;
+    color: #666;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+li a:hover:not(.active) {
+    background-color: #ddd;
+}
+
+li a.active {
+    color: white;
+    background-color: #4CAF50;
+}
+
+table {
+	font-family: arial, sans-serif;
+	border-collapse: collapse;
+	width: 80%;
+}
+
+td, th {
+	border: 1px solid #d4e4d5;
+	text-align: center;
+	padding: 8px;
+}
+
+tr:nth-child(even) {
+	background-color: #d4e4d5;
+}
+
+fieldset {
+	font-size: 18px;
+	padding: 10px;
+	width: 250px;
+	line-height: 1.8;
+	margin: auto;
+}
+
+.button {
+	background-color: #4CAF50; /* Green */
+	border: none;
+	color: white;
+	padding: 1px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+}
+
+.button1 {
+	background-color: white;
+	color: black;
+	border: 2px solid #4CAF50;
+}
+
+a.pList:link, a:visited {
+	background-color: none;
+	color: black;
+	border: 1px solid #b7cab5;
+	padding: 2px 4px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+}
+
+a.pList:hover, a:active {
+	background-color: green;
+	color: white;
+}
+
+.modalDialog {
+	position: fixed;
+	font-family: Arial, Helvetica, sans-serif;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	background: rgba(0, 0, 0, 0.8);
+	z-index: 99999;
+	opacity: 0;
+	-webkit-transition: opacity 400ms ease-in;
+	-moz-transition: opacity 400ms ease-in;
+	transition: opacity 400ms ease-in;
+	pointer-events: none;
+}
+
+.modalDialog:target {
+	opacity: 1;
+	pointer-events: auto;
+}
+
+.modalDialog>div {
+	width: 650px;
+	position: relative;
+	margin: 10% auto;
+	padding: 10px 10px 10px 10px;
+	background: white;
+}
+
+
+</style>
+<script src="resources/js/jquery.js"></script>
+<script>
+$(document).ready(function(){
+    var show = localStorage.getItem('showregform');
+    if(show === 'true'){
+        $('#myRegform').show();
+    }
+});
+
+
+
+$(document).ready(function(){
+    $("#regform").click(function(){
+        $("#myRegform").toggle();
+       
+        if($("#myRegform").is( ":visible" )) {  	
+        	localStorage.setItem('showregform', 'true');}    	
+        	    else {localStorage.setItem('showregform', 'false');} 
+    });
+});
+
+
+</script>
+</head>
+<body>
+
+<c:url value="Controller" var="logoutURL">
+    <c:param name="command" value="logout" />
+</c:url>
+
+<ul>
+  <li><a class="active" id="regform" href="#">${registerValue}</a></li>
+  <li><a id="doctorlist" href="Controller?command=getAllDoctors">${doctorsValue}</a></li>
+  <li><a id="patientlist" href="Controller?command=getAllPatients">${patientsValue}</a></li>
+  <li><a id="assigndoctor" href="Controller?command=getAssignDoctorForm">${assignDoctorValue}</a></li>
+  <li><a id="newPatients" href="Controller?command=getNewPatients">${newPatientsValue }</a></li>
+  <li style="float:right" ><a class="active" href="${logoutURL}">${logoutValue}</a></li>
+</ul>
+
+<div id="myRegform" style="display:none">
+<%@ include file="/WEB-INF/jspf/admin/regform.jspf" %>
+</div>
+
+<%@ include file="/WEB-INF/jspf/admin/allDoctors.jspf" %>
+<%@ include file="/WEB-INF/jspf/admin/allPatients.jspf" %>
+<%@ include file="/WEB-INF/jspf/admin/assignDoctor.jspf" %>
+<%@ include file="/WEB-INF/jspf/admin/newPatients.jspf" %>
+
+
+
+</body>
+</html>
+
+
+
